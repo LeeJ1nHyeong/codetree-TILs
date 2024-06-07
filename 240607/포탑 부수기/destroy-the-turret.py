@@ -61,7 +61,7 @@ def laser_attack(wi, wj, si, sj):
 # 폭탄 공격
 def bomb_attack(wi, wj, si, sj):
     # 강한 포탑 공격력의 절반에 해당하는 값을 공격력으로 설정
-    power = board[si][sj]
+    power = board[wi][wj]
 
     attack_turret(si, sj, power)
 
@@ -69,7 +69,7 @@ def bomb_attack(wi, wj, si, sj):
     for di, dj in (0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1):
         ni, nj = (si + di) % n, (sj + dj) % m
         if board[ni][nj]:
-            attack_turret(si, sj, power // 2)
+            attack_turret(ni, nj, power // 2)
 
 # 포탑 수리
 def repair():
@@ -88,7 +88,7 @@ prev_i = [[0] * m for _ in range(n)]  # 직전 방문 지역의 i좌표 저장
 prev_j = [[0] * m for _ in range(n)]  # 직전 방문 지역의 j좌표 저장
 
 for turn in range(1, k + 1):
-    # 살아있는 포탑 저장
+    # 살아있는 포탑을 탐색하여 저장
     turret = []
     for i in range(n):
         for j in range(m):
@@ -103,7 +103,7 @@ for turn in range(1, k + 1):
     init()
 
     # 문제 조건에 따른 우선순위 순서대로 정렬
-    turret.sort(key=lambda x: (x[0], x[1], -(x[2] + x[3]), -x[3]))
+    turret.sort(key=lambda x: (x[0], -x[1], -(x[2] + x[3]), -x[3]))
 
     # 가장 약한 포탑 설정
     weak_i,  weak_j = turret[0][2], turret[0][3]
