@@ -68,6 +68,9 @@ def bomb_attack(wi, wj, si, sj):
     # 강한 포탑 기준 8방향의 포탑에 폭탄 공격
     for di, dj in (0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1):
         ni, nj = (si + di) % n, (sj + dj) % m
+        # 8방향 중 공격자 포탑일 경우 continue
+        if ni == wi and nj == wj:
+            continue
         if board[ni][nj]:
             attack_turret(ni, nj, power // 2)
 
@@ -77,6 +80,7 @@ def repair():
         for j in range(m):
             if board[i][j] and not active[i][j]:
                 board[i][j] += 1
+
 
 n, m, k = map(int, input().split())
 board = [list(map(int, input().split())) for _ in range(n)]
