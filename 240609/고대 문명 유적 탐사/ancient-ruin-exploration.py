@@ -21,7 +21,7 @@ def rotate(ci, cj):
     for i in range(3):
         for j in range(3):
             rotate_90[r + j][c + 2 - i] = board[r + i][c + j]
-            rotate_180[r + 2 - j][c + 2 - i] = board[r + i][c + j]
+            rotate_180[r + 2 - i][c + 2 - j] = board[r + i][c + j]
             rotate_270[r + 2 - j][c + i] = board[r + i][c + j]
 
     gain_list_90 = bfs(rotate_90)
@@ -31,19 +31,19 @@ def rotate(ci, cj):
             is_max = False
 
         if len(gain_list_90) == len(gain_list):
-            if max_j < cj:
-                is_max = False
-
-            if max_j == cj:
-                if max_i < ci:
+            if max_rotate_angle == 90:
+                if max_j < cj:
                     is_max = False
+
+                if max_j == cj:
+                    if max_i < ci:
+                        is_max = False
 
         if is_max:
             max_rotate = rotate_90
             max_rotate_angle = 90
             gain_list = gain_list_90
             max_i, max_j = ci, cj
-
 
     gain_list_180 = bfs(rotate_180)
     if gain_list_180:
@@ -138,6 +138,9 @@ value = []
 
 idx = 0
 for _ in range(k):
+    # print("board----------")
+    # for b in board:
+    #     print(*b)
     max_rotate = []
     max_rotate_angle = 360
     max_i, max_j = -1, -1
@@ -152,12 +155,21 @@ for _ in range(k):
     if not gain_list:
         break
 
+    # print("max_rotate----------init")
+    # print(max_i, max_j, max_rotate_angle)
+    # for mr in max_rotate:
+    #     print(*mr)
+
     cnt += len(gain_list)
     gain_list.sort(key=lambda x: (x[1], -x[0]))
-    
+
     for i, j in gain_list:
         max_rotate[i][j] = piece[idx]
         idx += 1
+
+    # print("max_rotate----------first")
+    # for mr in max_rotate:
+    #     print(*mr)
 
     while True:
         add_gain_list = bfs(max_rotate)
@@ -171,7 +183,18 @@ for _ in range(k):
             max_rotate[i][j] = piece[idx]
             idx += 1
 
+    #     print("max_rotate----------chain")
+    #     for mr in max_rotate:
+    #         print(*mr)
+
+    # print("max_rotate----------final")
+    # for mr in max_rotate:
+    #     print(*mr)
+
+    # print()
+
     value.append(cnt)
+    # print(cnt)
 
     board = max_rotate
 
