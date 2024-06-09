@@ -33,7 +33,7 @@ def move():
                     break
 
                 if not is_move:
-                    next_maze[i][j] = maze[i][j]
+                    next_maze[i][j] += maze[i][j]
 
             elif maze[i][j] > 0:
                 next_maze[i][j] = maze[i][j]
@@ -93,6 +93,9 @@ for _ in range(k):
     # for m in maze:
     #     print(*m)
 
+    # print("first move cnt---------")
+    # print(move_cnt)
+
     if not participate:
         break
                     
@@ -150,6 +153,7 @@ for _ in range(k):
             visited[ni][nj] = 1
             queue.append((ni, nj))
 
+    # print("square----------")
     # print(min_i, min_j, min_square)
 
     maze = rotate(min_i, min_j, min_square)
@@ -157,9 +161,11 @@ for _ in range(k):
     # print("maze----------rotate")
     # for m in maze:
     #     print(*m)
-    # print(move_cnt, exit_i + 1, exit_j + 1)
+    # print("rotate move cnt---------")
+    # print(move_cnt)
+    # print("rotate exit----------")
+    # print(exit_i, exit_j)
     # print()
-
 
 print(move_cnt)
 print(exit_i + 1, exit_j + 1)
