@@ -24,15 +24,16 @@ def move():
                     if short_exit < abs(ni - exit_i) + abs(nj - exit_j):
                         continue
 
-                    move_cnt += 1
+                    move_cnt += -maze[i][j]
                     is_move = True
-                    next_maze[ni][nj] = maze[i][j]
+                    next_maze[ni][nj] += maze[i][j]
                     if ni == exit_i and nj == exit_j:
+                        participate -= -next_maze[ni][nj]
                         next_maze[ni][nj] = 0
                     break
 
                 if not is_move:
-                    next_maze[i][j] -= 1
+                    next_maze[i][j] = maze[i][j]
 
             elif maze[i][j] > 0:
                 next_maze[i][j] = maze[i][j]
@@ -149,10 +150,11 @@ for _ in range(k):
             visited[ni][nj] = 1
             queue.append((ni, nj))
 
+    # print(min_i, min_j, min_square)
+
     maze = rotate(min_i, min_j, min_square)
 
     # print("maze----------rotate")
-    # print(min_i, min_j, min_square)
     # for m in maze:
     #     print(*m)
     # print(move_cnt, exit_i + 1, exit_j + 1)
