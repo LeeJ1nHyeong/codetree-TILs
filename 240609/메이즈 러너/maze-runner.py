@@ -41,11 +41,26 @@ def move():
     return next_maze
 
 
-def bfs():
-    return
+def min_square():
+    global min_size, min_i, min_j
+
+    for size in range(2, n + 1):
+        for i1 in range(n - size + 1):
+            for j1 in range(n - size + 1):
+                i2, j2 = i1 + size - 1, j1 + size - 1
+
+                if not (i1 <= exit_i <= i2 and j1 <= exit_j <= j2):
+                    continue
+
+                for i in range(i1, i2 + 1):
+                    for j in range(j1, j2 + 1):
+                        if maze[i][j] < 0:
+                            min_size = size
+                            min_i, min_j = i1, j1
+                            return
 
 
-def rotate(min_i, min_j, min_square):
+def rotate(min_i, min_j, size):
     global exit_i, exit_j
 
     rotate_maze = [[0] * n for _ in range(n)]
@@ -54,15 +69,15 @@ def rotate(min_i, min_j, min_square):
         for j in range(n):
             rotate_maze[i][j] = maze[i][j]
 
-    for i in range(min_square):
-        for j in range(min_square):
+    for i in range(size):
+        for j in range(size):
             if maze[min_i + i][min_j + j] > 0:
                 maze[min_i + i][min_j + j] -= 1
 
             if min_i + i == exit_i and min_j + j == exit_j:
-                rotate_exit_i, rotate_exit_j = min_i + j, min_j + (min_square - 1) - i
+                rotate_exit_i, rotate_exit_j = min_i + j, min_j + (size - 1) - i
 
-            rotate_maze[min_i + j][min_j + (min_square - 1) - i] = maze[min_i + i][min_j + j]
+            rotate_maze[min_i + j][min_j + (size - 1) - i] = maze[min_i + i][min_j + j]
 
     exit_i, exit_j = rotate_exit_i, rotate_exit_j
 
@@ -81,6 +96,8 @@ exit_i, exit_j = map(int, input().split())
 exit_i -= 1
 exit_j -= 1
 
+min_size, min_i, min_j = 0, 0, 0
+
 move_cnt = 0
 
 # print("maze----------init")
@@ -98,65 +115,12 @@ for _ in range(k):
 
     if not participate:
         break
-                    
-    min_square = n
-    min_i, min_j = n, n
-
-    visited = [[0] * n for _ in range(n)]
-    queue = deque([(exit_i, exit_j)])
-    visited[exit_i][exit_j] = 1
-
-    while queue:
-        i, j = queue.popleft()
-        if maze[i][j] < 0:
-            row_length, column_length = abs(i - exit_i) + 1, abs(j - exit_j) + 1
-            if min_square < max(row_length, column_length):
-                continue
-
-            if min_square == max(row_length, column_length):
-                if row_length >= column_length:
-                    if min_i < min(i, exit_i):
-                        continue
-                    if min_i == min(i, exit_i):
-                        if min_j < max(j, exit_j) - min_square + 1:
-                            continue
-                else:
-                    if min_i < max(i, exit_i) - min_square + 1:
-                        continue
-                    if min_i == max(i, exit_i) - min_square + 1:
-                        if min_j < min(j, exit_j):
-                            continue
-
-            min_square = max(row_length, column_length)
-            if row_length >= column_length:
-                min_i = min(i, exit_i)
-                min_j = max(j, exit_j) - min_square + 1
-                if min_j < 0:
-                    min_j = 0
-
-            else:
-                min_i = max(i, exit_i) - min_square + 1
-                if min_i < 0:
-                    min_i = 0
-                min_j = min(j, exit_j)
-            continue
-
-        for di, dj in (-1, 0), (1, 0), (0, -1), (0, 1):
-            ni, nj = i + di, j + dj
-
-            if ni < 0 or ni == n or nj < 0 or nj == n:
-                continue
-
-            if visited[ni][nj]:
-                continue
-
-            visited[ni][nj] = 1
-            queue.append((ni, nj))
-
+    
+    min_square()
     # print("square----------")
-    # print(min_i, min_j, min_square)
+    # print(min_i, min_j, min_size)
 
-    maze = rotate(min_i, min_j, min_square)
+    maze = rotate(min_i, min_j, min_size)
 
     # print("maze----------rotate")
     # for m in maze:
