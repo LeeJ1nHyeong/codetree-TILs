@@ -61,10 +61,24 @@ def select_santa():
 
 
 # 루돌프와 산타 충돌
-def collision(num, turn, score, di, dj):
+def collision(num, turn, s, i, j, di, dj):
+    score[num] += s
+    is_stun[num] = turn
 
-    interaction()
-    return
+    i += di * d
+    j += dj * d
+
+    if i < 0 or i >= n or j < 0 or j >= n:
+        is_alive[num] = 0
+        return
+
+    else:
+        santa[num] = (i, j)
+        prev_santa_num = board[i][j]
+        board[i][j] = num
+
+        # 산타 상호작용
+        interaction(prev_santa_num, i, j, di, dj)
 
 
 # 산타 간의 상호작용
@@ -75,6 +89,7 @@ def interaction(num, i, j, di, dj):
         if not num:
             return
 
+        # 진행 방향으로 1칸씩 이동
         i += di
         j += dj
 
@@ -130,22 +145,7 @@ def move_santa():
 
         # 이동한 산타가 루돌프와 충돌했을 경우
         if ni == ri and nj == rj:
-            score[num] += d
-            is_stun[num] = turn
-
-            ni += -di * d
-            nj += -dj * d
-
-            if ni < 0 or ni >= n or nj < 0 or nj >= n:
-                is_alive[num] = 0
-
-            else:
-                santa[num] = (ni, nj)
-                prev_santa_num = board[ni][nj]
-                board[ni][nj] = num
-
-                # 산타 상호작용
-                interaction(prev_santa_num, ni, nj, -di, -dj)
+            collision(num, turn, d, ni, nj, -di, -dj)
 
         # 루돌프와 충돌하지 않을 경우
         else:
@@ -172,6 +172,7 @@ def move_rudolph(min_i, min_j):
 
 # 턴 종료
 def end_turn():
+    # 생존 중인 산타의 점수 1점 추가
     for num in range(1, p + 1):
         if is_alive[num]:
             score[num] += 1
@@ -230,24 +231,7 @@ for turn in range(1, m + 1):
         board[ri][rj] = 0
         si, sj = santa[santa_num]
 
-        score[santa_num] += c
-        is_stun[santa_num] = turn
-
-        si += di * c
-        sj += dj * c
-
-        if si < 0 or si >= n or sj < 0 or sj >= n:
-            is_alive[santa_num] = 0
-
-        else:
-            santa[santa_num] = (si, sj)
-            prev_santa_num = board[si][sj]
-            board[si][sj] = santa_num
-
-            i, j = santa[prev_santa_num]
-
-            # 산타 상호작용
-            interaction(prev_santa_num, i, j, di, dj)
+        collision(santa_num, turn, c, si, sj, di, dj)
 
     # 산타 이동
     move_santa()
