@@ -12,6 +12,7 @@ def save_santa():
         # 탈락한 산타는 제외
         if not is_alive[num]:
             continue
+
         si, sj = santa[num]
         board[si][sj] = num
 
@@ -53,6 +54,41 @@ def select_santa():
         min_i, min_j = i, j
 
 
+# 루돌프와 산타 충돌
+def collision(num, turn, score, di, dj):
+
+    interaction()
+    return
+
+# 산타 간의 상호작용
+def interaction(num, i, j, di, dj):
+    while True:
+        if not num:
+            return
+
+        i += di
+        j += dj
+
+        if i < 0 or i >= n or j < 0 or j >= n:
+            is_alive[num] = 0
+            return
+
+        santa[num] = (i, j)
+        temp = board[i][j]
+        board[i][j] = num
+        num = temp
+
+# 산타 이동
+def move_santa():
+    return
+
+# 턴 종료
+def end_turn():
+    for num in range(1, p + 1):
+        if is_alive[num]:
+            score[num] += 1
+
+
 n, m, p, c, d = map(int, input().split())
 board = [[0] * n for _ in range(n)]
 
@@ -87,19 +123,12 @@ for turn in range(1, m + 1):
     # 산타 좌표를 board에 저장
     save_santa()
 
-    # print("init----------")
-    # for b in board:
-    #     print(*b)
-
     # 루돌프와 가장 가까운 산타 선정
     min_santa_num = 0
     min_distance = -1
     min_i, min_j = -1, -1
 
     select_santa()
-
-    # print("min_santa----------")
-    # print(min_santa_num, min_i, min_j)
 
     # 루돌프 이동
     di, dj = 0, 0
@@ -117,18 +146,14 @@ for turn in range(1, m + 1):
     ri += di
     rj += dj
 
-    # print("루돌프----------")
-    # print(ri, rj)
-
     # 루돌프가 움직여서 산타와 충돌했을 경우
     if board[ri][rj]:
         santa_num = board[ri][rj]
+        board[ri][rj] = 0
+        si, sj = santa[santa_num]
+
         score[santa_num] += c
         is_stun[santa_num] = turn
-
-        board[ri][rj] = 0
-
-        si, sj = santa[santa_num]
 
         si += di * c
         sj += dj * c
@@ -141,27 +166,10 @@ for turn in range(1, m + 1):
             prev_santa_num = board[si][sj]
             board[si][sj] = santa_num
 
+            i, j = santa[prev_santa_num]
+
             # 산타 상호작용
-            while True:
-                if not prev_santa_num:
-                    break
-
-                i, j = santa[prev_santa_num]
-                i += di
-                j += dj
-
-                if i < 0 or i >= n or j < 0 or j >= n:
-                    is_alive[prev_santa_num] = 0
-                    break
-
-                santa[prev_santa_num] = (i, j)
-                temp = board[i][j]
-                board[i][j] = prev_santa_num
-                prev_santa_num = temp
-
-    # print("rudolph move----------")
-    # for b in board:
-    #     print(*b)
+            interaction(prev_santa_num, i, j, di, dj)
 
     # 산타 이동
     for num in range(1, p + 1):
@@ -217,39 +225,14 @@ for turn in range(1, m + 1):
                 board[ni][nj] = num
 
                 # 산타 상호작용
-                while True:
-                    if not prev_santa_num:
-                        break
-
-                    ni -= di
-                    nj -= dj
-
-                    if ni < 0 or ni == n or nj < 0 or nj == n:
-                        is_alive[prev_santa_num] = 0
-                        break
-
-                    santa[prev_santa_num] = (ni, nj)
-                    temp = board[ni][nj]
-                    board[ni][nj] = prev_santa_num
-                    prev_santa_num = temp
+                interaction(prev_santa_num, ni, nj, -di, -dj)
 
         # 루돌프와 충돌하지 않을 경우
         else:
             board[ni][nj] = num
             santa[num] = (ni, nj)
 
-    # print("santa move----------")
-    # for b in board:
-    #     print(*b)
-
     # 턴 종료
-    for num in range(1, p + 1):
-        if is_alive[num]:
-            score[num] += 1
-
-    # print("score----------")
-    # print(*score[1:])
-
-    # print()
+    end_turn()
 
 print(*score[1:])
