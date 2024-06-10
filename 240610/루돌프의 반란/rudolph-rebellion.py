@@ -1,3 +1,4 @@
+# board 초기화
 def clear():
     for i in range(n):
         for j in range(n):
@@ -5,7 +6,7 @@ def clear():
 
 # 산타 좌표 저장
 def save_santa():
-    # board 비우기
+    # board 초기화
     clear()
 
     # 산타 좌표 저장
@@ -36,10 +37,10 @@ def select_santa():
         if not is_alive[num]:
             continue
 
-        i, j = santa[num]
-        distance = (i - ri) ** 2 + (j - rj) ** 2
+        i, j = santa[num]  # 산타 좌표
+        distance = (i - ri) ** 2 + (j - rj) ** 2  # 산타와 루돌프 간의 거리
 
-        # 최단거리가 설정되어있지 않으면 바로 적용
+        # 최단거리가 설정되어있지 않으면 바로 설정
         if min_distance == -1:
             set_min_santa(num, distance, i, j)
             continue
@@ -62,21 +63,31 @@ def select_santa():
 
 # 루돌프와 산타 충돌
 def collision(num, turn, s, i, j, di, dj):
+    # 충돌한 산타에게 점수 부여(루돌프 -> 산타는 c점, 산타 -> 루돌프는 d점)
     score[num] += s
+
+    # 해당 턴에 기절
     is_stun[num] = turn
 
-    i += di * d
-    j += dj * d
+    # 진행방향으로 s칸 만큼 이동
+    i += di * s
+    j += dj * s
 
+    # 맵 밖을 벗어났다면 탈락 처리
     if i < 0 or i >= n or j < 0 or j >= n:
         is_alive[num] = 0
         return
 
+    # 산타 좌표 최신화
     santa[num] = (i, j)
+
+    # 이동한 지역에 이전 산타가 있는지 확인
     prev_santa_num = board[i][j]
+
+    # 이동 지역에 현재 산타 저장
     board[i][j] = num
 
-    # 산타 상호작용
+    # 산타 상호작용 확인
     interaction(prev_santa_num, i, j, di, dj)
 
 
@@ -88,6 +99,7 @@ def interaction(num, i, j, di, dj):
         if not num:
             return
 
+        # 진행방향으로 1칸씩 이동
         i += di
         j += dj
 
@@ -110,11 +122,12 @@ def move_santa():
         if not is_alive[num] or is_stun[num] == turn or is_stun[num] == turn - 1:
             continue
 
-        si, sj = santa[num]
+        si, sj = santa[num]  # 산타 좌표
 
-        min_distance = (ri - si) ** 2 + (rj - sj) ** 2
-        ni, nj = -1, -1
-        di, dj = 0, 0
+        min_distance = (ri - si) ** 2 + (rj - sj) ** 2  # 산타와 루돌프 간의 최단거리
+        ni, nj = -1, -1  # 이동 후 좌표. (-1, -1)은 이동 불가능하다는 의미
+        di, dj = 0, 0  # 진행 방향
+
         # 상우하좌 순서로 이동 가능 여부 확인
         for mi, mj in (-1, 0), (0, 1), (1, 0), (0, -1):
             move_i, move_j = si + mi, sj + mj
@@ -131,10 +144,12 @@ def move_santa():
             if min_distance <= (move_i - ri) ** 2 + (move_j - rj) ** 2:
                 continue
 
+            # 조건을 만족할 경우 최신화
             min_distance = (move_i - ri) ** 2 + (move_j - rj) ** 2
             ni, nj = move_i, move_j
             di, dj = mi, mj
 
+        # 이동이 불가능하다면 continue
         if ni == -1 and nj == -1:
             continue
 
@@ -155,6 +170,7 @@ def move_santa():
 def move_rudolph(min_i, min_j):
     di, dj = 0, 0
 
+    # 선정된 산타와 가까워지는 방향으로 이동 방향 설정
     if ri > min_i:
         di = -1
     elif ri < min_i:
@@ -170,6 +186,7 @@ def move_rudolph(min_i, min_j):
 
 # 턴 종료
 def end_turn():
+    # 생존한 산타에게 1점 추가
     for num in range(1, p + 1):
         if is_alive[num]:
             score[num] += 1
@@ -194,8 +211,7 @@ ri -= 1
 rj -= 1
 
 # 산타 좌표
-santa = [(0, 0)] * (p + 1)
-santa[0] = (-1, -1)
+santa = [(-1, -1)] * (p + 1)
 
 for _ in range(p):
     num, si, sj = map(int, input().split())
@@ -224,28 +240,17 @@ for turn in range(1, m + 1):
 
     # 루돌프가 움직여서 산타와 충돌했을 경우
     if board[ri][rj]:
+        # 충돌한 산타 번호 저장
         santa_num = board[ri][rj]
+
+        # 해당 지역을 빈 칸으로 변경
         board[ri][rj] = 0
+
+        # 충돌한 산타의 현재 좌표
         si, sj = santa[santa_num]
 
-        score[santa_num] += c
-        is_stun[santa_num] = turn
-
-        si += di * c
-        sj += dj * c
-
-        if si < 0 or si >= n or sj < 0 or sj >= n:
-            is_alive[santa_num] = 0
-
-        else:
-            santa[santa_num] = (si, sj)
-            prev_santa_num = board[si][sj]
-            board[si][sj] = santa_num
-
-            i, j = santa[prev_santa_num]
-
-            # 산타 상호작용
-            interaction(prev_santa_num, i, j, di, dj)
+        # 충돌
+        collision(santa_num, turn, c, si, sj, di, dj)
 
     # 산타 이동
     move_santa()
