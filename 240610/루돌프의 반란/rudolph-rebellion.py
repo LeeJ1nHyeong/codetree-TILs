@@ -70,14 +70,14 @@ def collision(num, turn, s, i, j, di, dj):
 
     if i < 0 or i >= n or j < 0 or j >= n:
         is_alive[num] = 0
-        
-    else:
-        santa[num] = (i, j)
-        prev_santa_num = board[i][j]
-        board[i][j] = num
+        return
 
-        # 산타 상호작용
-        interaction(prev_santa_num, i, j, di, dj)
+    santa[num] = (i, j)
+    prev_santa_num = board[i][j]
+    board[i][j] = num
+
+    # 산타 상호작용
+    interaction(prev_santa_num, i, j, di, dj)
 
 
 # 산타 간의 상호작용
