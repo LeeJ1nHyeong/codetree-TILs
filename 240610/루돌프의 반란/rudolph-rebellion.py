@@ -208,7 +208,7 @@ for turn in range(1, m + 1):
             ni += -di * d
             nj += -dj * d
 
-            if ni < 0 or ni == n or nj < 0 or nj == n:
+            if ni < 0 or ni >= n or nj < 0 or nj >= n:
                 is_alive[num] = 0
 
             else:
