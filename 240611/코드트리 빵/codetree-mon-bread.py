@@ -89,6 +89,9 @@ while sum(arrive) != m:
             arrive[num] = 1
             change_wall.append((move_i, move_j))
 
+    if sum(arrive) == m:
+        break
+
     # 해당 시간에 모든 사람들이 움직인 후 change_wall에 있는 모든 좌표들을 벽으로 교체
     for i, j in change_wall:
         board[i][j] = -1
@@ -100,21 +103,34 @@ while sum(arrive) != m:
     # t <= m인 t번은 베이스 캠프로 이동
     if t <= m:
         num = t
+        min_bi, min_bj = n, n
 
         # 목표 편의점에서 이동가능한 가장 가까운 베이스캠프 탐색
         si, sj = store[num]
 
-        queue = deque([(si, sj)])
+        queue = deque([(si, sj, 0)])
         visited = [[0] * n for _ in range(n)]
         visited[si][sj] = 1
 
+        min_cnt = n * n
         while queue:
-            ci, cj = queue.popleft()
+            ci, cj, cnt = queue.popleft()
+
+            if cnt > min_cnt:
+                continue
 
             if board[ci][cj] == 1:
-                board[ci][cj] = -1
-                person[num] = (ci, cj)
-                break
+                if cnt == min_cnt:
+                    if ci > min_bi:
+                        continue
+
+                    if ci == min_bi:
+                        if cj > min_bj:
+                            continue
+
+                min_cnt = cnt
+                min_bi, min_bj = ci, cj
+                continue
 
             for di, dj in (-1, 0), (0, -1), (0, 1), (1, 0):
                 ni, nj = ci + di, cj + dj
@@ -129,7 +145,10 @@ while sum(arrive) != m:
                     continue
 
                 visited[ni][nj] = 1
-                queue.append((ni, nj))
+                queue.append((ni, nj, cnt + 1))
+
+        person[num] = (min_bi, min_bj)
+        board[min_bi][min_bj] = -1
 
     # print("basecamp----------")
     # for b in board:
