@@ -20,6 +20,7 @@ t = 0  # 시간
 while sum(arrive) != m:
     t += 1
 
+    change_wall = []
     # 한 칸씩 이동
     for num in range(1, m + 1):
         # 도착한 사람의 번호는 제외
@@ -82,7 +83,7 @@ while sum(arrive) != m:
         # 목표 편의점에 도착했다면 도착 표시 후 해당 지역 벽(-1)으로 변환
         if (move_i, move_j) == store[num]:
             arrive[num] = 1
-            board[move_i][move_j] = -1
+            change_wall.append((move_i, move_j))
 
     # t <= m인 t번은 베이스 캠프로 이동
     if t <= m:
@@ -117,6 +118,10 @@ while sum(arrive) != m:
                     continue
 
                 visited[ni][nj] = 1
-                queue.append((ni, nj))    
+                queue.append((ni, nj))
+
+    # 해당 시간에 모든 사람들이 움직인 후 change_wall에 있는 모든 좌표들을 벽으로 교체
+    for i, j in change_wall:
+        board[i][j] = -1
 
 print(t)
