@@ -17,6 +17,10 @@ arrive = [0] * (m + 1)
 
 t = 0  # 시간
 
+# print("init----------")
+# for b in board:
+#     print(*b)
+
 while sum(arrive) != m:
     t += 1
 
@@ -85,10 +89,17 @@ while sum(arrive) != m:
             arrive[num] = 1
             change_wall.append((move_i, move_j))
 
+    # 해당 시간에 모든 사람들이 움직인 후 change_wall에 있는 모든 좌표들을 벽으로 교체
+    for i, j in change_wall:
+        board[i][j] = -1
+
+    # print("move----------")
+    # for b in board:
+    #     print(*b)
+
     # t <= m인 t번은 베이스 캠프로 이동
     if t <= m:
         num = t
-        min_bi, min_bj = n, n
 
         # 목표 편의점에서 이동가능한 가장 가까운 베이스캠프 탐색
         si, sj = store[num]
@@ -120,8 +131,20 @@ while sum(arrive) != m:
                 visited[ni][nj] = 1
                 queue.append((ni, nj))
 
-    # 해당 시간에 모든 사람들이 움직인 후 change_wall에 있는 모든 좌표들을 벽으로 교체
-    for i, j in change_wall:
-        board[i][j] = -1
+    # print("basecamp----------")
+    # for b in board:
+    #     print(*b)
+
+    # print("person----------")
+    # print(person)
+
+    # print("store----------")
+    # print(store)
+
+    # print("arrive----------")
+    # print(arrive)
+
+    # print()
+
 
 print(t)
