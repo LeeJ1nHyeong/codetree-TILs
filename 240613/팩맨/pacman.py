@@ -73,7 +73,7 @@ for turn in range(1, t + 1):
     for d1 in range(4):
         for d2 in range(4):
             for d3 in range(4):
-                visited = [[0] * 4 for _ in range(4)]
+                visited = []
                 cnt = 0
                 ni, nj = pi, pj
 
@@ -84,7 +84,7 @@ for turn in range(1, t + 1):
                 if ni < 0 or ni == 4 or nj < 0 or nj == 4:
                     continue
 
-                visited[ni][nj] = 1
+                visited.append((ni, nj))
                 cnt += len(board[ni][nj])
 
                 # 두번째 이동
@@ -94,9 +94,9 @@ for turn in range(1, t + 1):
                 if ni < 0 or ni == 4 or nj < 0 or nj == 4:
                     continue
 
-                if not visited[ni][nj]:
+                if (ni, nj) not in visited:
                     cnt += len(board[ni][nj])
-                    visited[ni][nj] = 1
+                    visited.append((ni, nj))
 
                 # 세번째 이동
                 ni += p_di[d3]
@@ -105,9 +105,9 @@ for turn in range(1, t + 1):
                 if ni < 0 or ni == 4 or nj < 0 or nj == 4:
                     continue
 
-                if not visited[ni][nj]:
-                    visited[ni][nj] = 1
+                if (ni, nj) not in visited:
                     cnt += len(board[ni][nj])
+                    visited.append((ni, nj))
 
                 if cnt <= max_cnt:
                     continue
