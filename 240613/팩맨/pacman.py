@@ -60,7 +60,7 @@ for _ in range(t):
                         break
 
                     if not is_move:
-                        next_board[ni][nj].append(d)
+                        next_board[i][j].append(d)
 
     board = next_board
 
