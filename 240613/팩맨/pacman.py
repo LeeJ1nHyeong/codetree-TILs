@@ -24,8 +24,7 @@ for _ in range(m):
 # for b in board:
 #     print(b)
 
-monster = 0
-for _ in range(t):
+for turn in range(1, t + 1):
     # 몬스터 알 부화
     egg = []  # 생존 중인 몬스터가 부화할 알
 
@@ -95,11 +94,9 @@ for _ in range(t):
                 if ni < 0 or ni == 4 or nj < 0 or nj == 4:
                     continue
 
-                if visited[ni][nj]:
-                    continue
-
-                visited[ni][nj] = 1
-                cnt += len(board[ni][nj])
+                if not visited[ni][nj]:
+                    cnt += len(board[ni][nj])
+                    visited[ni][nj] = 1
 
                 # 세번째 이동
                 ni += p_di[d3]
@@ -108,11 +105,9 @@ for _ in range(t):
                 if ni < 0 or ni == 4 or nj < 0 or nj == 4:
                     continue
 
-                if visited[ni][nj]:
-                    continue
-
-                visited[ni][nj] = 1
-                cnt += len(board[ni][nj])
+                if not visited[ni][nj]:
+                    visited[ni][nj] = 1
+                    cnt += len(board[ni][nj])
 
                 if cnt <= max_cnt:
                     continue
@@ -130,7 +125,7 @@ for _ in range(t):
 
     if board[pi][pj]:
         for _ in range(len(board[pi][pj])):
-            dead_monster[pi][pj].append(2)
+            dead_monster[pi][pj].append(3)
 
         board[pi][pj] = []
 
@@ -141,7 +136,7 @@ for _ in range(t):
 
     if board[pi][pj]:
         for _ in range(len(board[pi][pj])):
-            dead_monster[pi][pj].append(2)
+            dead_monster[pi][pj].append(3)
 
         board[pi][pj] = []
 
@@ -152,7 +147,7 @@ for _ in range(t):
 
     if board[pi][pj]:
         for _ in range(len(board[pi][pj])):
-            dead_monster[pi][pj].append(2)
+            dead_monster[pi][pj].append(3)
 
         board[pi][pj] = []
 
@@ -167,7 +162,7 @@ for _ in range(t):
             if dead_monster[i][j]:
                 dead_monster_ij = []
                 for dm in dead_monster[i][j]:
-                    if dm > 0:
+                    if dm > 1:
                         dead_monster_ij.append(dm - 1)
 
                 next_dead_monster[i][j] = dead_monster_ij
@@ -182,23 +177,20 @@ for _ in range(t):
     for i, j, d in egg:
         board[i][j].append(d)
 
-    # 복제 후 생존 중인 몬스터 탐색
-    after_monster = 0
-    for i in range(4):
-        for j in range(4):
-            if board[i][j]:
-                after_monster += len(board[i][j])
-
-    monster = after_monster
-
+    # print(pi, pj)
     # print("turn end----------")
     # for b in board:
     #     print(b)
+    # print("dead----------")
+    # for dm in dead_monster:
+    #     print(dm)
 
     # print()
 
-    # 몬스터가 없다면 즉시 종료
-    if not monster:
-        break
+monster = 0
+for i in range(4):
+    for j in range(4):
+        if board[i][j]:
+            monster += len(board[i][j])
 
 print(monster)
