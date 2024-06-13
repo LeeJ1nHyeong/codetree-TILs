@@ -26,7 +26,7 @@ def gravity():
     for j in range(n):
         move = 0
         for i in range(n - 1, -1, -1):
-            if board[i][j] == 4:
+            if board[i][j] == m + 1:
                 move += 1
 
             else:
@@ -35,7 +35,7 @@ def gravity():
                 else:
                     if move:
                         board[i + move][j] = board[i][j]
-                        board[i][j] = 4
+                        board[i][j] = m + 1
 
 # 반시계 방향 90도 회전
 def rotate():
@@ -49,7 +49,7 @@ def rotate():
 
 
 while True:
-# for _ in range(4):
+# for _ in range(1):
     # 폭탄 묶음 탐색
     max_bomb_cnt = 0
     max_red_bomb_cnt = 0
@@ -63,7 +63,8 @@ while True:
             if board[i][j] <= 0:
                 continue
 
-            if board[i][j] == 4:
+            # 빈 칸 (m + 1)은 제외
+            if board[i][j] == m + 1:
                 continue
 
             # 방문지역은 탐색 제외
@@ -91,8 +92,9 @@ while True:
                     if ni < 0 or ni == n or nj < 0 or nj == n:
                         continue
 
-                    if board[ni][nj] != target and board[ni][nj] != 0:
-                        continue
+                    if board[ni][nj] != target:
+                        if board[ni][nj]:
+                            continue
                     
                     if visited[ni][nj]:
                         continue
@@ -140,7 +142,7 @@ while True:
             max_i, max_j = center_i, center_j
             max_target = target
 
-    # print("폭탄 위치----------")
+    # print("폭탄 기준점 위치----------")
     # print(max_i, max_j)
 
     # 폭탄 묶음이 없으면 while문 종료
@@ -163,9 +165,10 @@ while True:
 
             if ni < 0 or ni == n or nj < 0 or nj == n:
                 continue
-
-            if board[ni][nj] != target and board[ni][nj] != 0:
-                continue
+            
+            if board[ni][nj] != target:
+                if board[ni][nj]:
+                    continue
 
             if visited[ni][nj]:
                 continue
@@ -193,12 +196,15 @@ while True:
     # print("rotate----------")
     # for b in board:
     #     print(*b)
+    
     # 회전 후 중력 작용
     gravity()
 
-    # print("2nd gravity----------")
-    # for b in board:
-    #     print(*b)
+#     print("2nd gravity----------")
+#     for b in board:
+#         print(*b)
+
+#     print()
 
 # for b in board:
 #     print(*b)
