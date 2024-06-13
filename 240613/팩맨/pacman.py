@@ -130,7 +130,7 @@ for _ in range(t):
 
     if board[pi][pj]:
         for _ in range(len(board[pi][pj])):
-            dead_monster[pi][pj].append(3)
+            dead_monster[pi][pj].append(2)
 
         board[pi][pj] = []
 
@@ -141,7 +141,7 @@ for _ in range(t):
 
     if board[pi][pj]:
         for _ in range(len(board[pi][pj])):
-            dead_monster[pi][pj].append(3)
+            dead_monster[pi][pj].append(2)
 
         board[pi][pj] = []
 
@@ -152,7 +152,7 @@ for _ in range(t):
 
     if board[pi][pj]:
         for _ in range(len(board[pi][pj])):
-            dead_monster[pi][pj].append(3)
+            dead_monster[pi][pj].append(2)
 
         board[pi][pj] = []
 
