@@ -5,14 +5,6 @@ n, m = map(int, input().split())
 board = [list(map(int, input().split())) for _ in range(n)]
 score = 0
 
-red_bomb = []
-
-for i in range(n):
-    for j in range(n):
-        if not board[i][j]:
-            red_bomb.append((i, j))
-
-
 # 폭탄 묶음 탐색
 def search():
     return
@@ -49,7 +41,14 @@ def rotate():
 
 
 while True:
-# for _ in range(1):
+# for _ in range(2):
+    # 빨간색 폭탄 위치 탐색
+    red_bomb = []
+    for i in range(n):
+        for j in range(n):
+            if not board[i][j]:
+                red_bomb.append((i, j))
+
     # 폭탄 묶음 탐색
     max_bomb_cnt = 0
     max_red_bomb_cnt = 0
@@ -93,9 +92,11 @@ while True:
                         continue
 
                     if board[ni][nj] != target:
+                        # 빨간색 폭탄이 아니면 continue
                         if board[ni][nj]:
                             continue
                     
+                    # 방문 지역이라면 continue
                     if visited[ni][nj]:
                         continue
 
@@ -143,7 +144,7 @@ while True:
             max_target = target
 
     # print("폭탄 기준점 위치----------")
-    # print(max_i, max_j)
+    # print(max_i, max_j, max_bomb_cnt)
 
     # 폭탄 묶음이 없으면 while문 종료
     if (max_i, max_j) == (n, n):
@@ -196,7 +197,7 @@ while True:
     # print("rotate----------")
     # for b in board:
     #     print(*b)
-    
+
     # 회전 후 중력 작용
     gravity()
 
