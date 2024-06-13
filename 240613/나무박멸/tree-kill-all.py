@@ -2,6 +2,16 @@ n, m, k, c = map(int, input().split())
 board = [list(map(int, input().split())) for _ in range(n)]
 herbicide = [[0] * n for _ in range(n)]
 
+
+# 나무가 있는지 확인
+def is_alive():
+    for i in range(n):
+        for j in range(n):
+            if board[i][j] > 0:
+                return True
+
+    return False
+
 # 초기 성장
 def grow():
     next_board = [[0] * n for _ in range(n)]
@@ -35,30 +45,33 @@ def breed():
 
     for i in range(n):
         for j in range(n):
-            if board[i][j] > 0:
-                next_board[i][j] = board[i][j]
-                breed_list = []
+            if not board[i][j]:
+                continue
 
-                for di, dj in (0, 1), (1, 0), (0, -1), (-1, 0):
-                    ni, nj = i + di, j + dj
+            if board[i][j] == -1:
+                next_board[i][j] = -1
+                continue
 
-                    if ni < 0 or ni == n or nj < 0 or nj == n:
-                        continue
+            next_board[i][j] = board[i][j]
+            breed_list = []
 
-                    if board[ni][nj] > 0 or board[ni][nj] == -1:
-                        continue
+            for di, dj in (0, 1), (1, 0), (0, -1), (-1, 0):
+                ni, nj = i + di, j + dj
 
-                    if herbicide[ni][nj] >= year:
-                        continue
+                if ni < 0 or ni == n or nj < 0 or nj == n:
+                    continue
 
-                    breed_list.append((ni, nj))
+                if board[ni][nj] > 0 or board[ni][nj] == -1:
+                    continue
 
-                if breed_list:
-                    for bi, bj in breed_list:
-                        next_board[bi][bj] += board[i][j] // len(breed_list)
+                if herbicide[ni][nj] >= year:
+                    continue
 
-            elif board[i][j] == -1:
-                next_board[i][j] = board[i][j]
+                breed_list.append((ni, nj))
+
+            if breed_list:
+                for bi, bj in breed_list:
+                    next_board[bi][bj] += board[i][j] // len(breed_list)
 
     return next_board
 
@@ -89,6 +102,11 @@ dead_tree = 0
 
 for year in range(1, m + 1):
     # print(f"year = {year}")
+
+    # 나무가 있는지 확인
+    if not is_alive():
+        break
+
     # 초기 성장
     board = grow()
 
@@ -105,7 +123,7 @@ for year in range(1, m + 1):
 
     # 제초제 위치 선정
     max_cnt = 0
-    max_i, max_j = 0, 0
+    max_i, max_j = n, n
 
     for i in range(n):
         for j in range(n):
