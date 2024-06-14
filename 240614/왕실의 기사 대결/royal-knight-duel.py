@@ -20,6 +20,9 @@ for _ in range(n):
     info.append([r - 1, c - 1, h, w])
     hp.append(k)
 
+# print("init hp----------")
+# print(hp)
+
 for _ in range(q):
     num, d = map(int, input().split())
 
@@ -31,12 +34,18 @@ for _ in range(q):
     knight = [[0] * l for _ in range(l)]
 
     for i in range(1, n + 1):
+        if not hp[i]:
+            continue
         r, c, h, w = info[i]
 
         for dr in range(h):
             for dc in range(w):
                 nr, nc = r + dr, c + dc
                 knight[nr][nc] = i
+
+    # print("before knight----------")
+    # for kn in knight:
+    #     print(*kn)
 
     # 이동방향으로 탐색
     r, c, h, w = info[num]
@@ -96,12 +105,15 @@ for _ in range(q):
                     visited[r + dr][c] = 1
                     check_list.append((r + dr, c))
 
-            continue
-
-        check_list.append((ni, nj))
+        else:
+            visited[ni][nj] = 1
+            check_list.append((ni, nj))
 
     if not can_move:
         continue
+
+    # print("move list----------")
+    # print(move_knight)
 
     # 기사 이동
     for mk in move_knight:
@@ -125,10 +137,6 @@ for _ in range(q):
 
         if hp[mk] < 0:
             hp[mk] = 0
-
-    # print("knight----------")
-    # for kn in knight:
-    #     print(*kn)
 
     # print("hp----------")
     # print(hp)
