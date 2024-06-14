@@ -86,6 +86,49 @@ def rotate_right(i, j):
     return True
 
 
+# bfs
+def bfs(i, j):
+    ## 절댓값이 같은 곳은 자유 이동
+    ## 절댓값이 다를 때 현재 위치가 출구(음수값)이라면 이동 가능
+    ## 위 세줄 추가한 거 생각해야함
+    
+    # bfs 초기 세팅
+    visited = [[0] * c for _ in range(r + 3)]
+    visited[i][j] = 1
+    queue = deque([(i, j)])
+
+    max_i = 0  # 최대한 남쪽으로 이동했을 때의 행
+
+    # bfs 진행
+    while queue:
+        ci, cj = queue.popleft()
+
+        for di, dj in (0, 1), (1, 0), (0, -1), (-1, 0):
+            ni, nj = ci + di, cj + dj
+
+            if ni < 3 or ni == r + 3 or nj < 0 or nj == c:
+                continue
+
+            if not forest[ni][nj]:
+                continue
+
+            if visited[ni][nj]:
+                continue
+
+            # 다른 골렘으로 이동할 때 현재 위치가 출구가 아니라면 continue
+            if abs(forest[ci][cj]) != abs(forest[ni][nj]):
+                if forest[ci][cj] > 0:
+                    continue
+
+            visited[ni][nj] = 1
+            queue.append((ni, nj))
+
+            # 최대로 남쪽으로 이동했는지 확인
+            max_i = max(max_i, ni - 2)
+
+    return max_i
+
+
 for num in range(1, k + 1):
     j, d = map(int, input().split())  # 시작 열, 출구 방향
     j -= 1
@@ -134,45 +177,8 @@ for num in range(1, k + 1):
             forest[ni][nj] = num
 
     # 정령 이동
-    ## 절댓값이 같은 곳은 자유 이동
-    ## 절댓값이 다를 때 현재 위치가 출구(음수값)이라면 이동 가능
-    ## 위 세줄 추가한 거 생각해야함
-
-    # bfs 초기 세팅
-    visited = [[0] * c for _ in range(r + 3)]
-    visited[spirit_i][spirit_j] = 1
-    queue = deque([(spirit_i, spirit_j)])
-
-    max_i = 0  # 최대한 남쪽으로 이동했을 때의 행
-
-    # bfs 진행
-    while queue:
-        ci, cj = queue.popleft()
-
-        for di, dj in (0, 1), (1, 0), (0, -1), (-1, 0):
-            ni, nj = ci + di, cj + dj
-
-            if ni < 3 or ni == r + 3 or nj < 0 or nj == c:
-                continue
-
-            if not forest[ni][nj]:
-                continue
-
-            if visited[ni][nj]:
-                continue
-
-            # 다른 골렘으로 이동할 때 현재 위치가 출구가 아니라면 continue
-            if abs(forest[ci][cj]) != abs(forest[ni][nj]):
-                if forest[ci][cj] > 0:
-                    continue
-
-            visited[ni][nj] = 1
-            queue.append((ni, nj))
-
-            # 최대로 남쪽으로 이동했는지 확인
-            max_i = max(max_i, ni - 2)
-
-    ans += max_i  # 최대 행 더해주기
+    ## bfs 진행하면서 최대 행 더해주기
+    ans += bfs(spirit_i, spirit_j)
 
 # 최대로 위치한 행의 총 합
 print(ans)
