@@ -22,7 +22,7 @@ public class Main {
             count++;
         }
 
-        double average = (double) (sum / count);
+        double average = (double) sum / (double) count;
 
         System.out.println(sum + " " + String.format("%.1f", average));
     }
