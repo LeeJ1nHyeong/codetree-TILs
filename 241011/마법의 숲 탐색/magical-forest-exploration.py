@@ -1,12 +1,23 @@
 from collections import deque
 
 
+def check(ni, nj):
+
+    if ni < 0 or ni >= r + 3 or nj < 0 or nj >= c:
+        return False
+
+    if forest[ni][nj]:
+        return False
+
+    return True
+
+
 def down(i, j):
     
     for di, dj in (1, -1), (2, 0), (1, 1):
         ni, nj = i + di, j + dj
 
-        if ni >= r + 3 or forest[ni][nj]:
+        if not check(ni, nj):
             return False
 
     return True
@@ -17,7 +28,7 @@ def rotate_left(i, j):
     for di, dj in (-1, -1), (0, -2), (1, -1), (1, -2), (2, -1):
         ni, nj = i + di, j + dj
 
-        if (ni >= r + 3 or nj < 0) or forest[ni][nj]:
+        if not check(ni, nj):
             return False
 
     return True
@@ -28,7 +39,7 @@ def rotate_right(i, j):
     for di, dj in (-1, 1), (0, 2), (1, 1), (1, 2), (2, 1):
         ni, nj = i + di, j + dj
 
-        if (ni >= r + 3 or nj >= c) or forest[ni][nj]:
+        if not check(ni, nj):
             return False
 
     return True
